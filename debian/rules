@@ -1,6 +1,8 @@
 #!/usr/bin/make -f
 #export DH_VERBOSE=1
 
+include /usr/share/dpkg/pkg-info.mk
+
 DJDS=`pwd`/debian/domjudge-domserver
 DJJH=`pwd`/debian/domjudge-judgehost
 DJDC=`pwd`/debian/domjudge-doc
@@ -30,7 +32,6 @@ build-stamp:
 		\
 		--with-judgehost_bindir=\$${prefix}/sbin \
 		--with-judgehost_libdir=\$${prefix}/share/domjudge \
-		--with-judgehost_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
 		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
 		--with-judgehost_chrootdir=/var/lib/domjudge/chroot \
 		--with-judgehost_logdir=/var/log/domjudge/judgehost \
@@ -69,15 +70,12 @@ install: build
 		rm COPYING* README.md README.country_flags ChangeLog
 
 	# This must be shipped in domjudge-common
-	rm $(DJDS)/etc/domjudge/common-config.php \
+	rm $(DJDS)/etc/domjudge/common-config.php $(DJDS)/etc/domjudge/genrestapicredentials \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
-
-	# This should only be in domserver (fixed upstream)
-	rm -f $(DJJH)/etc/domjudge/verdicts.php
 
 	# This is in domjudge-common
 	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
-		$(DJDS)/usr/share/domjudge/lib/vendor
+		$(DJJH)/etc/domjudge/genrestapicredentials
 
 	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
@@ -94,12 +92,8 @@ install: build
 		$(DJDS)/usr/share/domjudge/webapp/var/log
 
 	# Makes no sense to include passwords generated on .deb build host
-	rm $(DJDS)/etc/domjudge/*.secret \
-		$(DJDS)/etc/domjudge/gendbpasswords \
-		$(DJDS)/usr/bin/dj_setup_database
-
-	# TODO: Why is runguard in /usr/sbin? It's never called directly?
-	# Doesn't really hurt currently.
+	rm $(DJDS)/etc/domjudge/*.secret $(DJJH)/etc/domjudge/restapi.secret \
+		$(DJDS)/etc/domjudge/gendbpasswords
 
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
@@ -112,18 +106,12 @@ install: build
 	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
 
-
-	# Database configuration
-	cat sql/mysql_db_structure.sql sql/mysql_db_defaultdata.sql \
-		sql/mysql_db_files_defaultdata.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
-	# Upgrades
-	for i in sql/upgrade/upgrade_*_*.sql; do \
-		T=`echo $$i|sed -r 's#sql/upgrade/upgrade_.*_(.*)\.sql#\1#'`; \
-		cp $$i $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/$$T; \
-	done
-	sed -i 's#^source #source /usr/share/domjudge/sql/#' $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/*
+        # Database configuration
+	cp -a debian/src/db_install \
+		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/install/mysql
+	cp -a debian/src/db_upgrade \
+		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/upgrade/mysql/$(DEB_VERSION)
 	cp -a debian/src/setadminpassword $(DJDS)/etc/domjudge/
-	cp -a debian/src/gendbparams $(DJDS)/etc/domjudge/
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -140,7 +128,7 @@ binary-indep: build install
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
-	dh_builddeb -i -- -Zxz
+	dh_builddeb -i
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -160,7 +148,7 @@ binary-arch: build install
 	dh_shlibdeps -a
 	dh_gencontrol -a
 	dh_md5sums -a
-	dh_builddeb -a -- -Zxz
+	dh_builddeb -a
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install
