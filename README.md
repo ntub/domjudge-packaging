@@ -2,6 +2,8 @@
 
 如果要安裝執行程式時所需要的套件寫在 [chroot-and-tar.sh](./docker/judgehost/chroot-and-tar.sh) 裡面，若安裝編譯時需要使用的套件寫在 [Dockerfile](./docker/judgehost/Dockerfile) 裡面。
 
+分之 NTUB 為為北商使用所做的調整 master 為官方的版本，盡量不做異動。
+
 ---
 
 # DOMjudge packaging repository
