@@ -1,3 +1,9 @@
+# 說明
+
+如果要安裝執行程式時所需要的套件寫在 [chroot-and-tar.sh](./docker/judgehost/chroot-and-tar.sh) 裡面，若安裝編譯時需要使用的套件寫在 [Dockerfile](./docker/judgehost/Dockerfile) 裡面。
+
+---
+
 # DOMjudge packaging repository
 
 This repository contains packaging code for DOMjudge in various
