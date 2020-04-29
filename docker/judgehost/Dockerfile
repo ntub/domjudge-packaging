@@ -17,6 +17,13 @@ RUN apt-get update \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
+	apt-transport-https dirmngr gnupg ca-certificates \
+	\
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
+	&& echo 'deb https://download.mono-project.com/repo/debian stable-buster main' | tee /etc/apt/sources.list.d/mono-official-stable.list \
+	&& apt-get update \
+	&& apt-get install -y ruby mono-devel mono-basic-dbg \
+	\
 	&& rm -rf /var/lib/apt/lists/*
 
 # Add chroot and judgehost data
