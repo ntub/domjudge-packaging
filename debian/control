@@ -5,10 +5,9 @@ Maintainer: DOMjudge Developers <team@domjudge.org>
 Uploaders: Jaap Eldering <jaap@jaapeldering.nl>, Keith Johnson <kj@ubergeek42.com>, Thijs Kinkhorst <thijs@debian.org>
 Build-Depends: libcurl4-gnutls-dev, libmagic-dev,
  debhelper (>= 12), libcgroup-dev, zip, libjsoncpp-dev
-Build-Depends-Indep: python-sphinx, python-sphinx-rtd-theme, rst2pdf,
- texlive-latex-recommended, texlive-latex-extra
+Build-Depends-Indep: python-sphinx, python-sphinx-rtd-theme, rst2pdf, fontconfig
 Homepage: https://www.domjudge.org
-Standards-Version: 3.9.8
+Standards-Version: 4.5.0
 Vcs-Git: https://github.com/DOMjudge/domjudge-packaging.git
 Vcs-Browser: https://github.com/DOMjudge/domjudge-packaging
 
@@ -16,6 +15,7 @@ Package: domjudge-common
 Architecture: all
 Depends: ${misc:Depends}
 Recommends: beep
+Replaces: domjudge-domserver (<< 7.3.0)
 Description: common files for the DOMjudge programming contest jury system
  This package contains files common to the elements of the DOMjudge
  programming contest jury system, and is only necessary as a dependency
@@ -25,11 +25,12 @@ Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
  php, php-mysql, php-xml, php-intl, php-curl, php-mbstring,
- php-cli, php-json, php-gd, php-zip,
+ php-cli, php-json, php-gd, php-zip, acl,
  zip, unzip, dbconfig-common, default-mysql-client | virtual-mysql-client,
  ${misc:Depends}
 Recommends: ntp, default-mysql-server | virtual-mysql-server
 Suggests: enscript, lpr
+Replaces: domjudge-common (<< 7.3.0)
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and
@@ -66,7 +67,6 @@ Package: domjudge-doc
 Architecture: all
 Section: doc
 Depends: ${misc:Depends}
-Suggests: texlive-latex-recommended, texlive-latex-extra
 Description: programming contest jury system (documentation)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and

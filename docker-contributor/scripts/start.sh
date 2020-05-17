@@ -23,19 +23,12 @@ sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
     -e "s/^memory_limit.*/memory_limit = 2G/" \
     -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
     -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-     /etc/php/7.2/fpm/php.ini
+     /etc/php/7.4/fpm/php.ini
 sed -ri -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-     /etc/php/7.2/cli/php.ini
+     /etc/php/7.4/cli/php.ini
 echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /domjudge
-
-# Determine whether we have a legacy DOMjudge instance, i.e. one without Symfony
-USE_LEGACY=0
-if [[ ! -d webapp ]]
-then
-  USE_LEGACY=1
-fi
 
 if [[ ! -f README.md ]] || ! grep -q DOMjudge README.md
 then
@@ -63,8 +56,8 @@ then
   echo "Skipping maintainer-mode install for DOMjudge"
 else
   echo "[..] Performing maintainer-mode install for DOMjudge"
-  sudo -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
-  sudo -u domjudge make maintainer-install
+  sudo -H -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
+  sudo -H -u domjudge make maintainer-install
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi
 
@@ -107,49 +100,35 @@ cp etc/nginx-conf /etc/nginx/sites-enabled/default
 # Replace nginx php socket location
 sed -i 's/server unix:.*/server unix:\/var\/run\/php-fpm-domjudge.sock;/' /etc/nginx/sites-enabled/default
 # Remove default FPM pool config and link in DOMJudge version
-if [[ -f /etc/php/7.2/fpm/pool.d/www.conf ]]
+if [[ -f /etc/php/7.4/fpm/pool.d/www.conf ]]
 then
-  rm /etc/php/7.2/fpm/pool.d/www.conf
+  rm /etc/php/7.4/fpm/pool.d/www.conf
 fi
-if [[ ! -f /etc/php/7.2/fpm/pool.d/domjudge.conf ]]
+if [[ ! -f /etc/php/7.4/fpm/pool.d/domjudge.conf ]]
 then
-  ln -s /domjudge/etc/domjudge-fpm.conf /etc/php/7.2/fpm/pool.d/domjudge.conf
+  ln -s /domjudge/etc/domjudge-fpm.conf /etc/php/7.4/fpm/pool.d/domjudge.conf
 fi
 # Change pm.max_children
-sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.2/fpm/pool.d/domjudge.conf
+sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.4/fpm/pool.d/domjudge.conf
 
 chown domjudge: /domjudge/etc/dbpasswords.secret
 chown domjudge: /domjudge/etc/restapi.secret
-if [[ "${USE_LEGACY}" -eq "0" ]]
-then
-  HAS_INNER_NGINX=0
-  NGINX_CONFIG_FILE=/etc/nginx/sites-enabled/default
-
-  # Check if we are on DOMjudge >= bb8209d4e9596b9480c1f85960dfb7c3d763b587 which has a separate file for the inner nginx configuration
-  if [[ -f etc/nginx-conf-inner ]]
-  then
-    HAS_INNER_NGINX=1
-    cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
-    NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
-    sed -i 's/\/domjudge\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
-    # Run DOMjudge in root
-    sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
-    sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
-    sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
-  else
-    # Run DOMjudge in root
-    sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' $NGINX_CONFIG_FILE
-    sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' $NGINX_CONFIG_FILE
-  fi
-  # Remove access_log and error_log entries
-  sed -i '/access_log/d' $NGINX_CONFIG_FILE
-  sed -i '/error_log/d' $NGINX_CONFIG_FILE
-  # Use debug front controller
-  sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
-  sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
-  # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
-  chown domjudge: /domjudge/webapp/var
-fi
+HAS_INNER_NGINX=1
+cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
+NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
+sed -i 's/\/domjudge\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
+# Run DOMjudge in root
+sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
+sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
+sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
+# Remove access_log and error_log entries
+sed -i '/access_log/d' $NGINX_CONFIG_FILE
+sed -i '/error_log/d' $NGINX_CONFIG_FILE
+# Use debug front controller
+sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
+sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
+# Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
+chown domjudge: /domjudge/webapp/var
 echo "[ok] Webserver config installed"; echo
 
 if [[ ! -d /chroot/domjudge ]]
@@ -160,7 +139,12 @@ then
 fi
 
 echo "[..] Setting up cgroups"
-bin/create_cgroups
+if [[ -f bin/create_cgroups ]]
+then
+  bin/create_cgroups
+else
+  judge/create_cgroups
+fi
 echo "[ok] cgroups set up"; echo
 
 echo "[..] Adding sudoers configuration"
