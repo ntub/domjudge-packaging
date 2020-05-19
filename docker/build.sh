@@ -29,11 +29,11 @@ docker cp domjudge-judgehost-${VERSION}-build:/chroot.tar.gz .
 docker cp domjudge-judgehost-${VERSION}-build:/judgehost.tar.gz .
 docker rm -f domjudge-judgehost-${VERSION}-build
 docker rmi domjudge/judgehost:${VERSION}-build
-docker build -t ntub/judgehost:${VERSION} -f judgehost/Dockerfile .
+docker build -t ntubapp/judgehost:${VERSION} -f judgehost/Dockerfile .
 echo "[ok] Done building Docker image for judgehost"
 
-echo "All done. Image ntub/judgehost:${VERSION} created"
+echo "All done. Image ntubapp/judgehost:${VERSION} created"
 echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
-echo "$ docker push ntub/judgehost:${VERSION}"
+echo "$ docker push ntubapp/judgehost:${VERSION}"
 echo "If this is the latest release, also run the following command:"
-echo "$ docker tag ntub/judgehost:${VERSION} ntub/judgehost:latest && docker push ntub/judgehost:latest"
+echo "$ docker tag ntubapp/judgehost:${VERSION} ntubapp/judgehost:latest && docker push ntubapp/judgehost:latest"
