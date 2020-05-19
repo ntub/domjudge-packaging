@@ -21,10 +21,6 @@ fi
 
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 
-# echo "[..] Building Docker image for domserver using intermediate build image..."
-# docker build -t domjudge/domserver:${VERSION} -f domserver/Dockerfile .
-# echo "[ok] Done building Docker image for domserver"
-
 echo "[..] Building Docker image for judgehost using intermediate build image..."
 docker build -t domjudge/judgehost:${VERSION}-build -f judgehost/Dockerfile.build .
 docker rm -f domjudge-judgehost-${VERSION}-build > /dev/null 2>&1 || true
@@ -33,18 +29,11 @@ docker cp domjudge-judgehost-${VERSION}-build:/chroot.tar.gz .
 docker cp domjudge-judgehost-${VERSION}-build:/judgehost.tar.gz .
 docker rm -f domjudge-judgehost-${VERSION}-build
 docker rmi domjudge/judgehost:${VERSION}-build
-docker build -t domjudge/judgehost:${VERSION} -f judgehost/Dockerfile .
+docker build -t ntub/judgehost:${VERSION} -f judgehost/Dockerfile .
 echo "[ok] Done building Docker image for judgehost"
 
-# echo "[..] Building Docker image for judgehost chroot..."
-# docker build -t domjudge/default-judgehost-chroot:${VERSION} -f judgehost/Dockerfile.chroot .
-# echo "[ok] Done building Docker image for judgehost chroot"
-
-echo "All done. Image domjudge/domserver:${VERSION} and domjudge/judgehost:${VERSION} created"
+echo "All done. Image ntub/judgehost:${VERSION} created"
 echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
-echo "$ docker push domjudge/domserver:${VERSION} && docker push domjudge/judgehost:${VERSION} && docker push domjudge/default-judgehost-chroot:${VERSION}"
+echo "$ docker push ntub/judgehost:${VERSION}"
 echo "If this is the latest release, also run the following command:"
-echo "$ docker tag domjudge/domserver:${VERSION} domjudge/domserver:latest && \
-docker tag domjudge/judgehost:${VERSION} domjudge/judgehost:latest && \
-docker tag domjudge/default-judgehost-chroot:${VERSION} domjudge/default-judgehost-chroot:latest && \
-docker push domjudge/domserver:latest && docker push domjudge/judgehost:latest && docker push domjudge/default-judgehost-chroot:latest"
+echo "$ docker tag ntub/judgehost:${VERSION} ntub/judgehost:latest && docker push ntub/judgehost:latest"
