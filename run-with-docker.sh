@@ -28,6 +28,10 @@ docker run -it -d \
 echo "Done"
 echo
 
+echo "Wait db up"
+sleep 10
+echo
+
 # PHP MyAdmin
 read -p "Do you want to create db admin? [Y/n]: " CREATE_DB_ADMIN
 if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
@@ -38,8 +42,8 @@ if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
     -p 8080:80 \
     phpmyadmin/phpmyadmin
   echo "Done"
-  echo
 fi
+echo
 
 # Domserver
 echo "Creating domserver ..."
