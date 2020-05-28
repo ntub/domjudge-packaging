@@ -24,6 +24,13 @@ RUN apt-get update \
 	&& apt-get update \
 	&& apt-get install -y ruby mono-devel mono-basic-dbg \
 	\
+	&& apt-get -y install clang libcurl4 libpython2.7 libpython2.7-dev libncurses5 curl \
+	&& curl https://swift.org/builds/swift-5.2.4-release/ubuntu1804/swift-5.2.4-RELEASE/swift-5.2.4-RELEASE-ubuntu18.04.tar.gz --output swift.tar.gz \
+	&& mkdir swift \
+	&& tar -xvzf swift.tar.gz -C swift --strip-components 1 \
+	&& cp -rv swift/usr/ / \
+	&& rm -rfv swift swift.tar.gz \
+	\
 	&& rm -rf /var/lib/apt/lists/*
 
 # Add chroot and judgehost data
