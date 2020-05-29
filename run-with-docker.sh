@@ -62,7 +62,7 @@ docker run -it -d \
   --name $DOMSERVER_NAME \
   domjudge/domserver:latest
 
-docker network connect judgejudge_internal $DOMSERVER_NAME
+docker network connect domjudge_internal $DOMSERVER_NAME
 echo "Done"
 echo
 
@@ -73,7 +73,7 @@ for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
     --privileged \
     -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --name judgehost-$i \
-    --network judgejudge_internal \
+    --network domjudge_internal \
     --hostname judgehost-$i \
     -e CONTAINER_TIMEZONE=$TIMEZONE \
     -e DAEMON_ID=$i \
