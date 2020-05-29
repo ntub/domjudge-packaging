@@ -52,7 +52,7 @@ docker run -it -d \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
   --network domjudge \
   -e CONTAINER_TIMEZONE=$TIMEZONE \
-  -e MYSQL_HOST=mariadb \
+  -e MYSQL_HOST=$DATABASE_NAME \
   -e MYSQL_USER=$MYSQL_USER \
   -e MYSQL_DATABASE=$MYSQL_DATABASE \
   -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
