@@ -17,7 +17,7 @@ DB_ADMIN_NAME="domjudge-db-admin"
 # Database
 echo "Creating datebase ..."
 docker run -it -d \
-  --network judgejudge \
+  --network domjudge \
   --name $DATABASE_NAME \
   -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
   -e MYSQL_USER=$MYSQL_USER \
@@ -39,7 +39,7 @@ if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
   echo "Creating phpmyadmin ..."
   docker run -it -d \
     --name $DB_ADMIN_NAME \
-    --network judgejudge \
+    --network domjudge \
     -p 8080:80 \
     phpmyadmin/phpmyadmin
   echo "Done"
@@ -50,7 +50,7 @@ echo
 echo "Creating domserver ..."
 docker run -it -d \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-  --network judgejudge \
+  --network domjudge \
   -e CONTAINER_TIMEZONE=$TIMEZONE \
   -e MYSQL_HOST=mariadb \
   -e MYSQL_USER=$MYSQL_USER \
