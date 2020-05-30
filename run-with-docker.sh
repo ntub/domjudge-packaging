@@ -40,6 +40,7 @@ if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
   docker run -it -d \
     --name $DB_ADMIN_NAME \
     --network domjudge \
+    -e PMA_HOST=$DATABASE_NAME \
     -p 8080:80 \
     phpmyadmin/phpmyadmin
   echo "Done"
