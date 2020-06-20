@@ -47,6 +47,10 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	$(MAKE) distclean
+	# Because the build process overwrites the docs in the tarball,
+	# we remove everything so a second build does not fail. Missing
+	# files are acceptable to dpkg-bp (but triggers warnings) 
+	rm -rf doc/manual/build/
 	dh_clean
 
 install:
@@ -84,9 +88,6 @@ install: build
 	cd $(DJDS)/usr/share/domjudge/webapp/public/images/ && \
 		mv teams affiliations ../../../../../../var/lib/domjudge/images/
 
-	# This we'll symlink from the system-copy
-	rm $(DJJH)/usr/lib/domjudge/sh-static
-
 	# Remove so they can be symlinked to system dirs
 	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache \
 		$(DJDS)/usr/share/domjudge/webapp/var/log
@@ -98,6 +99,9 @@ install: build
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 	chmod 0770 $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
+
+	# Fix correct systemd unit file location for Debian systems
+	mv $(DJJH)/usr/lib/systemd/system $(DJJH)/lib/systemd/
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #;s# root\\:# domjudge\\:#' $(DJJH)/etc/domjudge/sudoers-domjudge
