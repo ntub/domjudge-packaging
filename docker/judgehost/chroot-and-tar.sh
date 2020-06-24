@@ -8,8 +8,8 @@ echo 'deb https://download.mono-project.com/repo/debian stable-buster main' | te
 apt-get update && \
 apt-get install -y mono-devel mono-basic-dbg && \
 apt-get install -y curl unzip && \
-curl -fsSL https://deno.land/x/install/install.sh | DENO_INSTALL=/usr sh \
-apt-get remove --auto-remove -y curl unzip \
+curl -fsSL https://deno.land/x/install/install.sh | DENO_INSTALL=/usr sh && \
+apt-get remove --auto-remove -y curl unzip && \
 rm -rf /var/lib/apt/lists/*"
 
 cd /
