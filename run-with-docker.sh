@@ -30,7 +30,7 @@ echo "Done"
 echo
 
 echo "Wait db up"
-sleep 10
+sleep 30
 echo
 
 # PHP MyAdmin
@@ -67,6 +67,19 @@ docker network connect domjudge_internal $DOMSERVER_NAME
 echo "Done"
 echo
 
+read -p "Read judgehost password from docker? [Y/n]: " READE_HOST_PASSWORD
+if [[ $READE_HOST_PASSWORD != "n" && $READE_HOST_PASSWORD != "N" ]]; then
+  echo
+  echo "Wait domserver up"
+  sleep 15
+  echo
+
+  JUDGEDAEMON_PASSWORD=$(docker exec -it domserver cat /opt/domjudge/domserver/etc/restapi.secret | grep default | awk '{{ print $4 }}')
+fi
+
+echo "JUDGEDAEMON_PASSWORD: $JUDGEDAEMON_PASSWORD"
+echo
+
 # Judgehost
 for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
   echo "Creating judgehost $i"
@@ -88,6 +101,9 @@ done
 echo "Domserver: http://localhost"
 echo "    username: admin"
 echo "    password: $(docker exec -it domserver cat /opt/domjudge/domserver/etc/initial_admin_password.secret)"
+echo "    ------------------------"
+echo "    username: judgehost"
+echo "    password: $JUDGEDAEMON_PASSWORD"
 if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
   echo "DB Admin: http://localhost:8080"
 fi
