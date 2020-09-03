@@ -7,6 +7,7 @@ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BF
 echo 'deb https://download.mono-project.com/repo/debian stable-buster main' | tee /etc/apt/sources.list.d/mono-official-stable.list && \
 apt-get update && \
 apt-get install -y mono-devel mono-basic-dbg && \
+apt-get install -y php-cli && \
 apt-get install -y curl unzip && \
 curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 apt-get install -y nodejs && \
