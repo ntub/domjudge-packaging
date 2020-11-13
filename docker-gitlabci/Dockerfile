@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
@@ -6,15 +6,23 @@ RUN apt-get update && apt-get install -y \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
   php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
+  # W3c test \
+  httrack \
+  # Visual regression browser \
+  firefox openimageio-tools imagemagick \
   # Docs \
-  python-sphinx python-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
+  python3-sphinx python3-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
   texlive-fonts-recommended texlive-lang-european \
   # Misc gitlab things \
   mariadb-client curl build-essential composer packaging-dev  \
-  git python-pip moreutils \
+  git python3-pip moreutils \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
+  # W3c WCAG \
+  npm libnss3 libcups2 libxss1 libasound2 libatk1.0-0  libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3-0 \
+  # Needed NPM packages \
+  && npm install pa11y \
   && rm -rf /var/lib/apt/lists/*
 
 # Put the gitlab user in sudo
@@ -27,4 +35,4 @@ RUN groupadd domjudge-run
 
 # Do some extra setup
 RUN mkdir -p /run/php \
- && rm /etc/php/7.2/fpm/pool.d/www.conf
+ && rm /etc/php/7.4/fpm/pool.d/www.conf
