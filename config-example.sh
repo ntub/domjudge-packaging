@@ -22,3 +22,7 @@ FPM_MAX_CHILDREN="40"
 JUDGE_HOST_COUNT="4"
 JUDGEDAEMON_USERNAME="judgehost"
 JUDGEDAEMON_PASSWORD="password"
+
+# Caddy Config
+CADDY_FILE_PATH="$PWD/conf/Caddyfile"
+CADDY_DATA_PATH="$PWD/caddy-data"
