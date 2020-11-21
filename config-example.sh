@@ -1,5 +1,10 @@
 TIMEZONE="Asia/Taipei"
 
+# Config
+DOMSERVER_NAME="domserver"
+DATABASE_NAME="domjudge-mariadb"
+DB_ADMIN_NAME="domjudge-db-admin"
+
 # Database config
 MYSQL_ROOT_PASSWORD="root"
 MYSQL_USER="domjudge"
