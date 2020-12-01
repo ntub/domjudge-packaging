@@ -26,6 +26,3 @@ JUDGEDAEMON_PASSWORD="password"
 # Caddy Config
 CADDY_FILE_PATH="$PWD/conf/Caddyfile"
 CADDY_DATA_PATH="$PWD/caddy-data"
-
-# Domserver config
-DOMJUDGE_FPM_FILE="$PWD/conf/domjudge-fpm.conf"
