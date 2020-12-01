@@ -7,6 +7,7 @@ source "./config.sh"
 echo "Creating domserver ..."
 docker run -it -d \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+  -v $DOMJUDGE_FPM_FILE:/opt/domjudge/domserver/etc/domjudge-fpm.conf:ro \
   --network domjudge \
   -e CONTAINER_TIMEZONE=$TIMEZONE \
   -e MYSQL_HOST=$DATABASE_NAME \
