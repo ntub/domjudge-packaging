@@ -9,21 +9,34 @@ RUN apt-get update && apt-get install -y \
   # W3c test \
   httrack \
   # Visual regression browser \
-  firefox openimageio-tools imagemagick \
+  cutycapt xvfb openimageio-tools imagemagick \
   # Docs \
   python3-sphinx python3-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
   texlive-fonts-recommended texlive-lang-european \
   # Misc gitlab things \
-  mariadb-client curl build-essential composer packaging-dev  \
-  git python3-pip moreutils \
+  mariadb-client curl build-essential packaging-dev  \
+  git python3-pip moreutils w3m \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
   # W3c WCAG \
   npm libnss3 libcups2 libxss1 libasound2 libatk1.0-0  libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3-0 \
+  # Code coverage for unit test
+  php-pear php-dev \
+  && pecl install pcov \
   # Needed NPM packages \
   && npm install pa11y \
   && rm -rf /var/lib/apt/lists/*
+
+# Install composer
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
+    && mv /composer.phar /usr/local/bin/composer
+
+# Enable pcov (code coverage) in PHP
+COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers

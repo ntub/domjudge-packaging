@@ -31,6 +31,8 @@ RUN apt-get update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
+    php-pear php-dev \
+    && pecl install pcov \
     && rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
@@ -48,8 +50,10 @@ RUN useradd -m domjudge \
   && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add exposed volume

@@ -27,8 +27,10 @@ RUN pip3 install pygments rst2pdf
 RUN useradd -m domjudge
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
@@ -63,8 +65,10 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Copy domserver directory and add script files
@@ -82,6 +86,10 @@ RUN useradd -m domjudge \
 	&& chmod 755 /scripts/start.sh \
 	&& chmod 755 /scripts/bin/* \
 	&& ln -s /scripts/bin/* /usr/bin/
+
+# Make the scripts available to the root user
+ENV PATH="$PATH:/opt/domjudge/domserver/bin"
+
 CMD ["/scripts/start.sh"]
 
 # Copy supervisor files
