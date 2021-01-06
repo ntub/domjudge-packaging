@@ -6,6 +6,7 @@ source "./config.sh"
 # Database
 echo "Creating datebase ..."
 docker run -it -d \
+  --restart always \
   --network domjudge \
   --name $DATABASE_NAME \
   -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
@@ -27,6 +28,7 @@ read -p "Do you want to create db admin? [Y/n]: " CREATE_DB_ADMIN
 if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
   echo "Creating phpmyadmin ..."
   docker run -it -d \
+    --restart always \
     --name $DB_ADMIN_NAME \
     --network domjudge \
     -e PMA_HOST=$DATABASE_NAME \

@@ -20,6 +20,7 @@ echo
 for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
   echo "Creating judgehost $i"
   docker run -it -d \
+    --restart always \
     --privileged \
     -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --name judgehost-$i \
