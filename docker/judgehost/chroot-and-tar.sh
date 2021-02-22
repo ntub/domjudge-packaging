@@ -12,8 +12,6 @@ apt-get install -y curl unzip && \
 curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 apt-get install -y nodejs && \
 apt-get remove --auto-remove -y curl unzip && \
-npm install -g typescript && \
-npm install -g ts-node && \
 rm -rf /var/lib/apt/lists/*"
 
 cd /

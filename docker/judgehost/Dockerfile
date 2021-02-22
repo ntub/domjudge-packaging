@@ -31,6 +31,10 @@ RUN apt-get update \
 	&& cp -rv swift/usr/ / \
 	&& rm -rfv swift swift.tar.gz \
 	\
+	&& curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+	&& apt-get install -y nodejs \
+	&& npm install -g typescript ts-node \
+	\
 	&& rm -rf /var/lib/apt/lists/*
 
 # Add chroot and judgehost data
