@@ -20,7 +20,7 @@ SOURCEDIR="${MAINSOURCE%/*}"
 # Byte-compile:
 # Add -d:ONLINE_JUDGE,DOMJUDGE below if you want to make it easier for teams to
 # do local debugging.
-mcs -o+ -r:$(find /usr/lib/mono/4.5/*.dll -printf '%f\n' | grep -v 'System.Threading.Tasks.Extensions.dll' | grep -v 'System.Memory.dll' | tr '\n' ',') -out:"$DESTCLI" "$@"
+csc -o+ -out:"$DESTCLI" "$@"
 EXITCODE=$?
 [ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 
