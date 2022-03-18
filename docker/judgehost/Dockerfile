@@ -26,7 +26,7 @@ RUN apt update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y ruby mono-devel mono-basic-dbg \
 	\
 	&& apt-get -y install --no-install-recommends --no-install-suggests clang libcurl4 libpython2.7 libpython2.7-dev libncurses5 curl \
-	&& curl https://swift.org/builds/swift-5.2.4-release/ubuntu1804/swift-5.2.4-RELEASE/swift-5.2.4-RELEASE-ubuntu18.04.tar.gz --output swift.tar.gz \
+	&& curl -L https://swift.org/builds/swift-5.2.4-release/ubuntu1804/swift-5.2.4-RELEASE/swift-5.2.4-RELEASE-ubuntu18.04.tar.gz --output swift.tar.gz \
 	&& mkdir swift \
 	&& tar -xvzf swift.tar.gz -C swift --strip-components 1 \
 	&& cp -rv swift/usr/ / \
