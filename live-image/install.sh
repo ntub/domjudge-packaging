@@ -51,9 +51,10 @@ if [ -z "$ON_TARGET_HOST" ]; then
 	fi
 	TARGET="$1"
 	shift
-	make -C `dirname $0` `basename $EXTRA`
-	scp "$0" `dirname $0`/`basename $EXTRA` "root@$TARGET:`dirname $EXTRA`"
-	ssh "root@$TARGET" "/tmp/`basename $0` ON_TARGET $ARGS"
+	make -C "$(dirname "$0")" "$(basename $EXTRA)"
+	scp "$0" "$(dirname "$0")/$(basename $EXTRA)" "root@$TARGET:$(dirname $EXTRA)"
+	# shellcheck disable=SC2029
+	ssh "root@$TARGET" "/tmp/$(basename "$0") ON_TARGET $ARGS"
 	exit 0
 fi
 
@@ -111,6 +112,7 @@ apt-get install -q -y \
 	enscript lpr zip unzip mlocate
 
 # Use DOMjudge debian packages if present under /tmp:
+# shellcheck disable=SC2144
 if [ -f /tmp/domjudge-domserver_*.deb ]; then
 	dpkg -i /tmp/domjudge-common_*.deb    /tmp/domjudge-doc_*.deb \
 	        /tmp/domjudge-domserver_*.deb /tmp/domjudge-judgehost_*.deb \
@@ -118,8 +120,8 @@ if [ -f /tmp/domjudge-domserver_*.deb ]; then
 else
 	USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
 	apt-get install -q -y \
-	        domjudge-domserver${USEVERSION} domjudge-doc${USEVERSION} \
-	        domjudge-judgehost${USEVERSION}
+	        domjudge-domserver"${USEVERSION}" domjudge-doc"${USEVERSION}" \
+	        domjudge-judgehost"${USEVERSION}"
 fi
 
 # Overwrite init script to fix start/restart:
@@ -175,10 +177,10 @@ rm -f /etc/ssh/ssh_host_*
 # Replace /etc/issue with live image specifics:
 mv /etc/issue /etc/issue.orig
 cat > /etc/issue.djlive <<EOF
-DOMjudge-live running on `cat /etc/issue.orig`
+DOMjudge-live running on $(cat /etc/issue.orig)
 
-DOMjudge-live image generated on `date`
-DOMjudge Debian package version `dpkg -s domjudge-common | sed -n 's/^Version: //p'`
+DOMjudge-live image generated on $(date)
+DOMjudge Debian package version $(dpkg -s domjudge-common | sed -n 's/^Version: //p')
 
 EOF
 cp /etc/issue.djlive /etc/issue.djlive-default-passwords

@@ -1,5 +1,5 @@
-FROM debian:latest
-MAINTAINER DOMjudge team <team@domjudge.org>
+FROM debian:stable
+LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	CONTAINER_TIMEZONE=Europe/Amsterdam \
@@ -11,8 +11,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	RUN_USER_UID_GID=62860
 
 # Install required packages for running of judgehost
-RUN apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt update \
+	&& apt install --no-install-recommends --no-install-suggests -y \
+	dumb-init \
 	acl zip unzip supervisor sudo procps libcgroup1 \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
@@ -45,14 +46,14 @@ ADD judgehost.tar.gz /
 RUN cp /opt/domjudge/judgehost/etc/sudoers-domjudge /etc/sudoers.d/
 
 # Add scripts
-COPY ["judgehost/scripts", "/scripts/"]
-
-# Change start script permissions, add user and fix permissions
-RUN chmod +x /scripts/start.sh \
-	&& useradd -m domjudge \
-	&& chown -R domjudge: /opt/domjudge
+COPY judgehost/scripts /scripts/
 
 # Make the scripts available to the root user
 ENV PATH="$PATH:/opt/domjudge/judgehost/bin"
 
+# Change start script permissions, add user and fix permissions
+COPY judgehost/configure.sh /configure.sh
+RUN chmod 700 /configure.sh && /configure.sh && rm -f /configure.sh
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/scripts/start.sh"]

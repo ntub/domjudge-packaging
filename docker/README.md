@@ -27,6 +27,7 @@ These containers do not include MySQL / MariaDB; the [MariaDB](https://hub.docke
     - [Environment variables](#environment-variables)
     - [Example AWS Setup](#example-aws-setup)
 - [Building the images](#building-the-images)
+- [Customizing the image](#customizing-the-image)
 
 ## Using the images
 
@@ -81,6 +82,8 @@ The following environment variables are supported by the `domserver` container:
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 * `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
+* `TRUSTED_PROXIES` (defaults to empty): The IP list of trusted proxy servers, separated by a comma(`,`).
+* `WEBAPP_BASEURL` (defaults to `/`): The Base Url of DOMserver. Such as `/domjudge`, You can access the DOMserver homepage via `http://localhost/domjudge`.
 
 #### Passwords through files
 
@@ -148,7 +151,7 @@ The following environment variables are supported by the `judgehost` container:
 * `JUDGEDAEMON_USERNAME` (defaults to `judgehost`): username used to connect to the API.
 * `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the password displayed for the `judgehost` user when the `domserver` container was started. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
-* `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults top `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
+* `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults to `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
 * `RUN_USER_UID_GID` (defaults to `62860`): UID/GID of the user that will submissions. Make sure this UID/GID is **not** used on your host OS.
 
 #### Example AWS Setup
@@ -202,3 +205,30 @@ If you want to build the images yourself, you can just run
 ```
 
 where `version` is the DOMjudge version to create the images for, e.g. `5.3.0`.
+
+To build domjudge with local sources, run
+```bash
+  tar --exclude-vcs -czf <path to domjudge-packaging>/docker/domjudge.tar.gz <domjudge source directory>
+  cd <path to domjudge-packaging>/docker
+  docker build -t domjudge -f domserver/Dockerfile .
+```
+Note that the source directory name has to match `domjudge-*`.
+
+
+## Customizing the image
+
+### Domjudge
+
+The image initalizes itself with the `start.sh` script.
+This script runs all executable files in `/scripts/start.d/` in alphabetical order.
+Before that, all files from `/scripts/start.ro/` are copied into the `start.d` folder.
+To customize any settings (e.g. modify the nginx config), add scripts to `start.ro` via a bind mount.
+
+*Warning*: The scripts inside this folder have full access to everything in the container (including passwords etc.).
+Only run trusted code there.
+
+To enable `REMOTE_USER` processing provided by a proxy in front of this image, mount the scripts from `examples/remote_user_scripts` to `start.ro`.
+
+### Judgehost
+
+To customize the packages available in the chroot (e.g. runtimes needed for submission languages), modify the `judgehost/chroot-and-tar.sh`, adding `-i <comma separated list of packages>` to the `dj_make_chroot` call.

@@ -9,7 +9,7 @@ set -e
 
 error()
 {
-	echo "Error: $@"
+	echo "Error: $*"
 	exit 1
 }
 
@@ -21,7 +21,7 @@ dj_pwhash()
 	htpasswd -nbB -C 10 foouser "$1" | sed 's/^foouser://'
 }
 
-[ `id -u` -eq 0 ] || error "this program must be run as root."
+[ "$(id -u)" -eq 0 ] || error "this program must be run as root."
 
 case "$1" in
 	rootpass)
@@ -63,9 +63,9 @@ EOF
 
 		echo "Updating DOMjudge web interface admin user password..."
 		if [ -z "$PASS" ]; then
-			read -es -p "Enter new admin user password: "  PASS1 ; echo
-			read -es -p "Retype new admin user password: " PASS2 ; echo
-			[ "x$PASS1" = "x$PASS2" ] || error "passwords do not match."
+			read -esr -p "Enter new admin user password: "  PASS1 ; echo
+			read -esr -p "Retype new admin user password: " PASS2 ; echo
+			[ "$PASS1" = "$PASS2" ] || error "passwords do not match."
 			PASS="$PASS1"
 		fi
 
@@ -138,7 +138,7 @@ EOF
 		dj_upgrade_chroot
 		;;
 
-     *|help)
+    help|*)
      cat <<EOF
 Usage: $0 <command> [argument]...
 
