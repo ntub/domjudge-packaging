@@ -17,7 +17,7 @@ docker run -it -d \
   -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
   -e FPM_MAX_CHILDREN=$FPM_MAX_CHILDREN \
   --name $DOMSERVER_NAME \
-  domjudge/domserver:${DOMJUDGE_VERSION}
+  ntubapp/domserver:${DOMJUDGE_VERSION}
 
 docker network connect domjudge_internal $DOMSERVER_NAME
 echo "Done"
