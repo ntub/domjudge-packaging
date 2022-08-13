@@ -28,6 +28,7 @@ for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
     --hostname judgehost_$i \
     -e CONTAINER_TIMEZONE=$TIMEZONE \
     -e DAEMON_ID=$i \
+    -e DOMSERVER_BASEURL=http://$DOMSERVER_NAME/ \
     -e JUDGEDAEMON_USERNAME=$JUDGEDAEMON_USERNAME \
     -e JUDGEDAEMON_PASSWORD=$JUDGEDAEMON_PASSWORD \
     ntubapp/judgehost:${DOMJUDGE_VERSION}
