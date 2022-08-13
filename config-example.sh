@@ -2,6 +2,7 @@ TIMEZONE="Asia/Taipei"
 
 # Config
 DOMSERVER_NAME="domjudge_domserver"
+JUDGEHOST_NAME="domjudge_judgehost"
 DATABASE_NAME="domjudge_database"
 DATABASE_ADMIN_NAME="domjudge_database_admin"
 REVERSE_PROXY_NAME="domjudge_web"

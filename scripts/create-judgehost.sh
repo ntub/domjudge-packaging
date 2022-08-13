@@ -23,9 +23,9 @@ for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
     --restart always \
     --privileged \
     -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-    --name judgehost-$i \
+    --name ${JUDGEHOST_NAME}_$i \
     --network domjudge_internal \
-    --hostname judgehost-$i \
+    --hostname judgehost_$i \
     -e CONTAINER_TIMEZONE=$TIMEZONE \
     -e DAEMON_ID=$i \
     -e JUDGEDAEMON_USERNAME=$JUDGEDAEMON_USERNAME \
