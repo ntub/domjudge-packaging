@@ -30,7 +30,7 @@ for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
     -e DAEMON_ID=$i \
     -e JUDGEDAEMON_USERNAME=$JUDGEDAEMON_USERNAME \
     -e JUDGEDAEMON_PASSWORD=$JUDGEDAEMON_PASSWORD \
-    ntubapp/judgehost:latest
+    ntubapp/judgehost:${DOMJUDGE_VERSION}
     echo "Done"
     echo
 done

@@ -15,7 +15,7 @@ docker run -it -d \
   -e MYSQL_DATABASE=$MYSQL_DATABASE \
   -v $MYSQL_DATA_PATH:/var/lib/mysql \
   -p 33066:3306 \
-  mariadb --max-connections=$MYSQL_MAX_CONNECTIONS --max_allowed_packet=$MYSQL_MAX_ALLOWED_PACKET --innodb_log_file_size=$MYSQL_INNODB_LOG_FILE_SIZE
+  mariadb:${MARIADB_VERSION} --max-connections=$MYSQL_MAX_CONNECTIONS --max_allowed_packet=$MYSQL_MAX_ALLOWED_PACKET --innodb_log_file_size=$MYSQL_INNODB_LOG_FILE_SIZE
 echo "Done"
 echo
 
@@ -29,7 +29,7 @@ if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
   echo "Creating phpmyadmin ..."
   docker run -it -d \
     --restart always \
-    --name $DB_ADMIN_NAME \
+    --name ${DATABASE_ADMIN_NAME} \
     --network domjudge \
     -e PMA_HOST=$DATABASE_NAME \
     -p 8080:80 \

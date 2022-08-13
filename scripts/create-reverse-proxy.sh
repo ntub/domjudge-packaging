@@ -11,5 +11,5 @@ docker run -d \
   -v $CADDY_FILE_PATH:/etc/caddy/Caddyfile:ro \
   -v $CADDY_DATA_PATH/data:/data \
   -v $CADDY_DATA_PATH/config:/config \
-  --name domjudge-reverse-proxy \
-  caddy:2-alpine
+  --name ${REVERSE_PROXY_NAME} \
+  caddy:${CADDY_VERSION}
