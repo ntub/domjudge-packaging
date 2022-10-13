@@ -22,10 +22,10 @@ for ((i = 1; i <= $JUDGE_HOST_COUNT; i++)); do
   docker run -it -d \
     --restart always \
     --privileged \
-    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --name ${JUDGEHOST_NAME}_$i \
     --network domjudge_internal \
     --hostname judgehost_$i \
+    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     -e CONTAINER_TIMEZONE=$TIMEZONE \
     -e DAEMON_ID=$i \
     -e DOMSERVER_BASEURL=http://$DOMSERVER_NAME/ \
