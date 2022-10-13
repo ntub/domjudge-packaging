@@ -19,13 +19,13 @@ docker run -it -d \
 echo "Done"
 echo
 
-echo "Wait db up"
-sleep 30
-echo
-
 # PHP MyAdmin
 read -p "Do you want to create db admin? [Y/n]: " CREATE_DB_ADMIN
 if [[ $CREATE_DB_ADMIN != "n" && $CREATE_DB_ADMIN != "N" ]]; then
+  echo "Wait db up"
+  sleep 30
+  echo
+
   echo "Creating phpmyadmin ..."
   docker run -it -d \
     --restart always \
