@@ -10,7 +10,7 @@ if [[ $READE_HOST_PASSWORD != "n" && $READE_HOST_PASSWORD != "N" ]]; then
   sleep 15
   echo
 
-  JUDGEDAEMON_PASSWORD=$(docker exec -it domserver cat /opt/domjudge/domserver/etc/restapi.secret | grep default | awk '{{ print $4 }}')
+  JUDGEDAEMON_PASSWORD=$(docker exec -it $DOMSERVER_NAME cat /opt/domjudge/domserver/etc/restapi.secret | grep default | awk '{{ print $4 }}')
 fi
 
 echo "JUDGEDAEMON_PASSWORD: $JUDGEDAEMON_PASSWORD"
