@@ -7,7 +7,6 @@ source "./config.sh"
 echo "Creating domserver ..."
 docker run -it -d \
   --restart always \
-  -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
   --network domjudge \
   --name $DOMSERVER_NAME \
   -e CONTAINER_TIMEZONE=$TIMEZONE \
