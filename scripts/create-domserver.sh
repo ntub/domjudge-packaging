@@ -16,7 +16,7 @@ docker run -it -d \
   -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
   -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
   -e FPM_MAX_CHILDREN=$FPM_MAX_CHILDREN \
-  -e TRUSTED_PROXIES=0.0.0.0/0
+  -e TRUSTED_PROXIES=0.0.0.0/0 \
   domjudge/domserver:${DOMJUDGE_VERSION}
 
 docker network connect domjudge_internal $DOMSERVER_NAME
