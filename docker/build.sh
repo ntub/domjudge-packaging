@@ -28,20 +28,20 @@ fi
 
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 
-echo "[..] Building Docker image for domserver..."
-./build-domjudge.sh "domjudge/domserver:${VERSION}"
-echo "[ok] Done building Docker image for domserver"
+# echo "[..] Building Docker image for domserver..."
+# ./build-domjudge.sh "domjudge/domserver:${VERSION}"
+# echo "[ok] Done building Docker image for domserver"
 
 echo "[..] Building Docker image for judgehost using intermediate build image..."
 ./build-judgehost.sh "domjudge/judgehost:${VERSION}"
 echo "[ok] Done building Docker image for judgehost"
 
-echo "[..] Building Docker image for judgehost chroot..."
-docker build -t "domjudge/default-judgehost-chroot:${VERSION}" -f judgehost/Dockerfile.chroot .
-echo "[ok] Done building Docker image for judgehost chroot"
+# echo "[..] Building Docker image for judgehost chroot..."
+# docker build -t "domjudge/default-judgehost-chroot:${VERSION}" -f judgehost/Dockerfile.chroot .
+# echo "[ok] Done building Docker image for judgehost chroot"
 
-echo "All done. Image domjudge/domserver:${VERSION} and domjudge/judgehost:${VERSION} created"
-echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
-echo "$ docker push ntubapp/judgehost:${VERSION}"
-echo "If this is the latest release, also run the following command:"
-echo "$ docker tag ntubapp/judgehost:${VERSION} ntubapp/judgehost:latest && docker push ntubapp/judgehost:latest"
+# echo "All done. Image domjudge/domserver:${VERSION} and domjudge/judgehost:${VERSION} created"
+# echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
+# echo "$ docker push ntubapp/judgehost:${VERSION}"
+# echo "If this is the latest release, also run the following command:"
+# echo "$ docker tag ntubapp/judgehost:${VERSION} ntubapp/judgehost:latest && docker push ntubapp/judgehost:latest"
