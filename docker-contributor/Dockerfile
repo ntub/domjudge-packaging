@@ -1,9 +1,11 @@
 ARG ARCH=
-FROM "${ARCH}ubuntu:focal"
+FROM "${ARCH}ubuntu:noble"
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
   CONTAINER_TIMEZONE=Europe/Amsterdam \
+  UID=1000 \
+  GID=1000 \
   MYSQL_HOST=mariadb \
   MYSQL_USER=domjudge \
   MYSQL_DATABASE=domjudge \
@@ -12,8 +14,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
   FPM_MAX_CHILDREN=40 \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0 \
-  PHPSUPPORTED="7.2 7.3 7.4 8.0 8.1" \
-  DEFAULTPHPVERSION="8.1" \
+  PHPSUPPORTED="8.1 8.2 8.3" \
+  DEFAULTPHPVERSION="8.3" \
   APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
 # Install required packages and clean up afterwards to make this image layer smaller
@@ -21,10 +23,10 @@ RUN apt update \
     && apt install --no-install-recommends --no-install-suggests -y \
     dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
-    php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
-    php7.4-gmp php7.4-xml php7.4-mbstring php7.4-xdebug php7.4-pcov \
-    bsdmainutils ntp \
+    nginx php8.3 php8.3-cli php8.3-fpm php8.3-zip \
+    php8.3-gd php8.3-curl php8.3-mysql php8.3-intl \
+    php8.3-gmp php8.3-xml php8.3-mbstring php8.3-xdebug php8.3-pcov \
+    bsdmainutils ntp lsof \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
@@ -34,19 +36,19 @@ RUN apt update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
-    php-pear php-dev software-properties-common \
+    php-pear php-dev software-properties-common python3-pygments rst2pdf gpg-agent tex-gyre \
     && rm -rf /var/lib/apt/lists/*
-
-# Needed for building the docs
-RUN pip3 install pygments && pip3 install rst2pdf
 
 # Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
   && mkdir -p /run/php
 
+# Remove default ubuntu user
+RUN userdel ubuntu && groupdel ubuntu || true
 # Set up users
-RUN useradd -m domjudge \
+RUN groupadd -g $GID domjudge \
+  && useradd -u $UID -g $GID -m domjudge \
   && groupadd domjudge-run \
   && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
 
@@ -60,7 +62,7 @@ RUN apt update && \
 # Install all supported PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt update
 RUN for VERSION in $PHPSUPPORTED; do \
-        if [ "${VERSION}" != "7.4" ]; then \
+        if [ "${VERSION}" != "8.3" ]; then \
             $APTINSTALL php${VERSION}; \
         fi; \
     done
@@ -68,7 +70,7 @@ RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
     for PACKAGE in $PACKAGES; do \
         PACKAGEALLVERSIONS="" && \
         for VERSION in $PHPSUPPORTED; do \
-            if [ "${VERSION}" != "7.4" ]; then \
+            if [ "${VERSION}" != "8.3" ]; then \
                 PACKAGEALLVERSIONS="$PACKAGEALLVERSIONS php${VERSION}-${PACKAGE#php*-}"; \
             fi; \
         done; \
@@ -82,11 +84,6 @@ RUN for VERSION in $PHPSUPPORTED; do \
         update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm${VERSION} ${PRIORTIY}; \
     done
 RUN update-alternatives --set php-fpm /usr/sbin/php-fpm${DEFAULTPHPVERSION}
-
-# Add exposed volume
-VOLUME ["/domjudge"]
-
-WORKDIR /domjudge
 
 # Add PHP configuration
 RUN mkdir /php-config
@@ -113,6 +110,8 @@ COPY ["supervisord.conf", "/etc/supervisor/"]
 COPY ["supervisor", "/etc/supervisor/conf.d/"]
 COPY ["sudoers-domjudge", "/etc/sudoers.d/domjudge"]
 RUN chmod 440 /etc/sudoers.d/domjudge
+
+USER domjudge
 
 # Expose HTTP port
 EXPOSE 80
