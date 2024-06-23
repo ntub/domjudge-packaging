@@ -1,7 +1,5 @@
 #!/bin/sh -eux
 
-BUILDKIT_PROGRESS=plain
-
 # Placeholders to annotate the Github actions logs
 trace_on () { true; }
 trace_off () { true; }
