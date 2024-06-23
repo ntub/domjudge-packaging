@@ -18,6 +18,7 @@ RUN apt update \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
+	curl \
 	\
 	&& curl -fsSL https://deb.nodesource.com/setup_20.x -o node_install.sh \
 	&& bash node_install.sh \
