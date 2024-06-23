@@ -16,17 +16,17 @@ then
 		trace_off () {
 			{ set +x; } 2>/dev/null
 		}
-		
+
 		section_start_internal () {
 			echo "::group::$1"
 			trace_on
 		}
-		
+
 		section_end_internal () {
 			echo "::endgroup::"
 			trace_on
 		}
-		
+
 		section_start () {
 			trace_off
 			section_start_internal "$@"
@@ -70,11 +70,11 @@ fi
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 section_end
 
-section_start "Build domserver container"
-echo "[..] Building Docker image for domserver..."
-./build-domjudge.sh "${NAMESPACE}/domserver:${VERSION}"
-echo "[ok] Done building Docker image for domserver"
-section_end
+# section_start "Build domserver container"
+# echo "[..] Building Docker image for domserver..."
+# ./build-domjudge.sh "${NAMESPACE}/domserver:${VERSION}"
+# echo "[ok] Done building Docker image for domserver"
+# section_end
 
 section_start "Build judgehost container (with intermediate image)"
 echo "[..] Building Docker image for judgehost using intermediate build image..."
@@ -82,19 +82,19 @@ echo "[..] Building Docker image for judgehost using intermediate build image...
 echo "[ok] Done building Docker image for judgehost"
 section_end
 
-section_start "Build judgehost container (judging chroot)"
-echo "[..] Building Docker image for judgehost chroot..."
-docker build -t "${NAMESPACE}/default-judgehost-chroot:${VERSION}" -f judgehost/Dockerfile.chroot .
-echo "[ok] Done building Docker image for judgehost chroot"
-section_end
+# section_start "Build judgehost container (judging chroot)"
+# echo "[..] Building Docker image for judgehost chroot..."
+# docker build -t "${NAMESPACE}/default-judgehost-chroot:${VERSION}" -f judgehost/Dockerfile.chroot .
+# echo "[ok] Done building Docker image for judgehost chroot"
+# section_end
 
-section_start "Push instructions"
-echo "All done. Image ${NAMESPACE}/domserver:${VERSION} and ${NAMESPACE}/judgehost:${VERSION} created"
-echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
-echo "$ docker push ${NAMESPACE}/domserver:${VERSION} && docker push ${NAMESPACE}/judgehost:${VERSION} && docker push $NAMESPACE}/default-judgehost-chroot:${VERSION}"
-echo "If this is the latest release, also run the following command:"
-echo "$ docker tag ${NAMESPACE}/domserver:${VERSION} ${NAMESPACE}/domserver:latest && \
-docker tag ${NAMESPACE}/judgehost:${VERSION} ${NAMESPACE}/judgehost:latest && \
-docker tag ${NAMESPACE}/default-judgehost-chroot:${VERSION} ${NAMESPACE}/default-judgehost-chroot:latest && \
-docker push ${NAMESPACE}/domserver:latest && docker push ${NAMESPACE}/judgehost:latest && docker push ${NAMESPACE}/default-judgehost-chroot:latest"
-section_end
+# section_start "Push instructions"
+# echo "All done. Image ${NAMESPACE}/domserver:${VERSION} and ${NAMESPACE}/judgehost:${VERSION} created"
+# echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
+# echo "$ docker push ${NAMESPACE}/domserver:${VERSION} && docker push ${NAMESPACE}/judgehost:${VERSION} && docker push $NAMESPACE}/default-judgehost-chroot:${VERSION}"
+# echo "If this is the latest release, also run the following command:"
+# echo "$ docker tag ${NAMESPACE}/domserver:${VERSION} ${NAMESPACE}/domserver:latest && \
+# docker tag ${NAMESPACE}/judgehost:${VERSION} ${NAMESPACE}/judgehost:latest && \
+# docker tag ${NAMESPACE}/default-judgehost-chroot:${VERSION} ${NAMESPACE}/default-judgehost-chroot:latest && \
+# docker push ${NAMESPACE}/domserver:latest && docker push ${NAMESPACE}/judgehost:latest && docker push ${NAMESPACE}/default-judgehost-chroot:latest"
+# section_end
