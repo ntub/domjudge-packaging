@@ -18,25 +18,10 @@ RUN apt update \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
-	apt-transport-https dirmngr gnupg ca-certificates \
 	\
-	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-	&& echo 'deb https://download.mono-project.com/repo/debian stable-buster main' | tee /etc/apt/sources.list.d/mono-official-stable.list \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y ruby mono-devel mono-basic-dbg \
-	\
-	&& apt-get -y install --no-install-recommends --no-install-suggests clang libcurl4 libpython2.7 libpython2.7-dev libncurses5 curl \
-	&& curl -L https://swift.org/builds/swift-5.2.4-release/ubuntu1804/swift-5.2.4-RELEASE/swift-5.2.4-RELEASE-ubuntu18.04.tar.gz --output swift.tar.gz \
-	&& mkdir swift \
-	&& tar -xvzf swift.tar.gz -C swift --strip-components 1 \
-	&& cp -rv swift/usr/ / \
-	&& rm -rfv swift swift.tar.gz \
-	\
-	&& curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+	&& curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 	&& apt-get install --no-install-recommends --no-install-suggests -y nodejs \
 	&& npm install -g typescript ts-node \
-	\
-	&& apt-get install --no-install-recommends --no-install-suggests -y golang \
 	\
 	&& rm -rf /var/lib/apt/lists/*
 
