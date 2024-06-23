@@ -19,7 +19,9 @@ RUN apt update \
 	php-gmp php-xml php-mbstring python3 \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
 	\
-	&& curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+	&& curl -fsSL https://deb.nodesource.com/setup_20.x -o node_install.sh \
+	&& bash node_install.sh \
+	&& rm -f node_install.sh \
 	&& apt-get install --no-install-recommends --no-install-suggests -y nodejs \
 	&& npm install -g typescript ts-node \
 	\
