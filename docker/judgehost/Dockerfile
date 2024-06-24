@@ -24,7 +24,6 @@ RUN apt update \
 	&& bash node_install.sh \
 	&& rm -f node_install.sh \
 	&& apt-get install --no-install-recommends --no-install-suggests -y nodejs \
-	&& npm install -g typescript ts-node \
 	\
 	&& rm -rf /var/lib/apt/lists/*
 
