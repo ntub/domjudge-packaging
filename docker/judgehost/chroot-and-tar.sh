@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+# NOTE:
+#   在 7.3.4 版本中 dj_make_chroot 會試圖安裝 pypy 這個套件，但是在新版的 Debian 中已經沒有這個套件了
+#   所以先備份舊版程式後，再把 dj_make_chroot 中的 pypy 取代成 pypy3
+#   DOMjudge 在新版本中已經修改了這個錯誤，但是 7.3.4 版本中還沒有修改才需要此 workaround
+cp /opt/domjudge/judgehost/bin/dj_make_chroot /opt/domjudge/judgehost/bin/dj_make_chroot.bak
+sed -i 's/pypy/pypy3/g' /opt/domjudge/judgehost/bin/dj_make_chroot
+
 # Usage: https://github.com/DOMjudge/domjudge/blob/main/misc-tools/dj_make_chroot.in#L58-L87
 /opt/domjudge/judgehost/bin/dj_make_chroot
 
