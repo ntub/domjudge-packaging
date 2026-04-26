@@ -57,11 +57,11 @@ fi
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 section_end
 
-section_start "Build domserver container"
-echo "[..] Building Docker image for domserver..."
-./build-domserver.sh "${NAMESPACE}/domserver:${VERSION}"
-echo "[ok] Done building Docker image for domserver"
-section_end
+# section_start "Build domserver container"
+# echo "[..] Building Docker image for domserver..."
+# ./build-domserver.sh "${NAMESPACE}/domserver:${VERSION}"
+# echo "[ok] Done building Docker image for domserver"
+# section_end
 
 section_start "Build judgehost container (with intermediate image)"
 echo "[..] Building Docker image for judgehost using intermediate build image..."
